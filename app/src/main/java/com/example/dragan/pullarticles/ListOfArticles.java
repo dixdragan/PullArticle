@@ -1,6 +1,7 @@
 package com.example.dragan.pullarticles;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -68,8 +69,12 @@ public class ListOfArticles extends AppCompatActivity {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                 final String id = jsonObject.getString("id");
                 final String title = jsonObject.getString("title");
+                String featured = jsonObject.getString("featured");
                 TextView textView=new TextView(ListOfArticles.this);
                 textView.setText(id + " " + title);
+                if("1".equals(featured)){
+                    textView.setTextColor(Color.parseColor("#ff0000"));
+                }
                 textView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
