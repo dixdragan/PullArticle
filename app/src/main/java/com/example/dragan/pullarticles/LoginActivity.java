@@ -75,7 +75,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private View mProgressView;
     private View mLoginFormView;
     private String username;
-    private String password;
+    private String pw;
 
 
     private class Task extends AsyncTask<Void,Void,String>{
@@ -84,8 +84,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             JSONObject object=new JSONObject();
             String text = "";
             try {
+
             object.put("username",username);
-            object.put("password",password);
+            object.put("password",pw);
                 URL url = new URL("http://android.ogosense.net/interns/ace/login.php");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setDoOutput(true);
@@ -123,8 +124,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
             try {
-            username=mEmailView.getText().toString();
-            password=mPasswordView.getText().toString();
             JSONObject response=new JSONObject(s);
             int uid=response.getInt("uid");
             if (uid>-1){
@@ -279,6 +278,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
+            username=mEmailView.getText().toString();
+            pw=mPasswordView.getText().toString();
             new Task().execute();
 //            mAuthTask = new UserLoginTask(email, password);
 //            mAuthTask.execute((Void) null);
