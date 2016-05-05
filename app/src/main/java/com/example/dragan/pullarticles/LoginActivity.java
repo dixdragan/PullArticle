@@ -77,14 +77,16 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private String username;
     private String password;
 
-    private class Task extends AsyncTask<URL,Void,String>{
+
+    private class Task extends AsyncTask<Void,Void,String>{
         @Override
-        protected String doInBackground(URL... params) {
+        protected String doInBackground(Void... params) {
             JSONObject object=new JSONObject();
+            String text = "";
             try {
             object.put("username",username);
             object.put("password",password);
-            URL url = new URL("http://android.ogosense.net/interns/ace/login.php");
+                URL url = new URL("http://android.ogosense.net/interns/ace/login.php");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setDoOutput(true);
             conn.setDoInput(true);
@@ -97,7 +99,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             StringBuilder sb = new StringBuilder();
             String line = null;
-            String text = null;
+
 
             // Read Server Response
             while ((line = reader.readLine()) != null) {
@@ -114,7 +116,30 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            return null;
+            return text;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            try {
+            username=mEmailView.getText().toString();
+            password=mPasswordView.getText().toString();
+            JSONObject response=new JSONObject(s);
+            int uid=response.getInt("uid");
+            if (uid>-1){
+                Intent loginIntent = new Intent(LoginActivity.this,ListOfArticles.class);
+                loginIntent.putExtra("uid", String.valueOf(uid));
+                LoginActivity.this.finish();
+                startActivity(loginIntent);
+            }
+
+            else {
+                Toast.makeText(getApplicationContext(),"Incorrect username or password",Toast.LENGTH_LONG).show();
+            }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -254,21 +279,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-
-            username=mEmailView.getText().toString();
-            password=mPasswordView.getText().toString();
-            JSONObject response=new JSONObject(text);
-            int uid=response.getInt("uid");
-            if (uid>-1){
-                Intent loginIntent = new Intent(LoginActivity.this,ListOfArticles.class);
-                loginIntent.putExtra("uid", String.valueOf(uid));
-                LoginActivity.this.finish();
-                startActivity(loginIntent);
-            }
-            else {
-                Toast.makeText(getApplicationContext(),"Incorrect username or password",Toast.LENGTH_LONG).show();
-            }
-
+            new Task().execute();
 //            mAuthTask = new UserLoginTask(email, password);
 //            mAuthTask.execute((Void) null);
         }
