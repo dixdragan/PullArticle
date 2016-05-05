@@ -74,6 +74,49 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    private String username;
+    private String password;
+
+    private class Task extends AsyncTask<URL,Void,String>{
+        @Override
+        protected String doInBackground(URL... params) {
+            JSONObject object=new JSONObject();
+            try {
+            object.put("username",username);
+            object.put("password",password);
+            URL url = new URL("http://android.ogosense.net/interns/ace/login.php");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setDoOutput(true);
+            conn.setDoInput(true);
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setRequestProperty("Accept", "application/json");
+            conn.setRequestMethod("POST");
+            OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+            wr.write(object.toString());
+            wr.flush();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            StringBuilder sb = new StringBuilder();
+            String line = null;
+            String text = null;
+
+            // Read Server Response
+            while ((line = reader.readLine()) != null) {
+                // Append server response in string
+                sb.append(line + "\n");
+            }
+
+
+            text = sb.toString();
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -212,37 +255,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // perform the user login attempt.
             showProgress(true);
 
-            JSONObject object=new JSONObject();
-            object.put("username",mEmailView.getText().toString());
-            object.put("password",mPasswordView.getText().toString());
-            URL url = new URL("http://android.ogosense.net/interns/ace/login.php");
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setDoOutput(true);
-            conn.setDoInput(true);
-            conn.setRequestProperty("Content-Type", "application/json");
-            conn.setRequestProperty("Accept", "application/json");
-            conn.setRequestMethod("POST");
-            OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-            wr.write(object.toString());
-            wr.flush();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            StringBuilder sb = new StringBuilder();
-            String line = null;
-            String text = null;
-
-            // Read Server Response
-            while ((line = reader.readLine()) != null) {
-                // Append server response in string
-                sb.append(line + "\n");
-            }
-
-
-            text = sb.toString();
+            username=mEmailView.getText().toString();
+            password=mPasswordView.getText().toString();
             JSONObject response=new JSONObject(text);
             int uid=response.getInt("uid");
             if (uid>-1){
                 Intent loginIntent = new Intent(LoginActivity.this,ListOfArticles.class);
-                loginIntent.putExtra("uid",uid);
+                loginIntent.putExtra("uid", String.valueOf(uid));
                 LoginActivity.this.finish();
                 startActivity(loginIntent);
             }
