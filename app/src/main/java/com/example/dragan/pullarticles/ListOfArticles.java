@@ -1,13 +1,17 @@
 package com.example.dragan.pullarticles;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -99,14 +103,24 @@ public class ListOfArticles extends AppCompatActivity {
                 textView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent articleIntent = new Intent(ListOfArticles.this, ArticleView.class);
-                        articleIntent.putExtra("URL", "http://android.ogosense.net/interns/ace/article.php?id=" + id);
-                        startActivity(articleIntent);
+                        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+                        boolean isConnected = activeNetwork != null &&
+                                activeNetwork.isConnectedOrConnecting();
+                        if (isConnected) {
+                            Intent articleIntent = new Intent(ListOfArticles.this, ArticleView.class);
+                            articleIntent.putExtra("URL", "http://android.ogosense.net/interns/ace/article.php?id=" + id);
+                            startActivity(articleIntent);
+                        }else{
+                            Toast.makeText(getApplicationContext(), "No internet connection!", Toast.LENGTH_SHORT).show();
+                        }
                     }
-                });
-                LinearLayout linearLayout= (LinearLayout) findViewById(R.id.linearLayout);
-                linearLayout.addView(textView);
-            }
+                    }
+
+                    );
+                    LinearLayout linearLayout = (LinearLayout) findViewById(R.id.linearLayout);
+                    linearLayout.addView(textView);
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }

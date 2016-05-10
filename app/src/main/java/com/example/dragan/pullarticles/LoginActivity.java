@@ -76,8 +76,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 if (con.getResponseCode() != 200) {
                     text = -2+"";
                 }else {
-
-
                     object.put("username", username);
                     object.put("password", pw);
                     URL url = new URL("http://android.ogosense.net/interns/ace/login.php");
@@ -244,7 +242,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             pw=mPasswordView.getText().toString();
 
             ConnectivityManager cm = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
-
             NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
             boolean isConnected = activeNetwork != null &&
                     activeNetwork.isConnectedOrConnecting();
