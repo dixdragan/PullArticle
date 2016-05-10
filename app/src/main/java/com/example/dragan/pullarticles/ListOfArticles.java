@@ -1,46 +1,66 @@
 package com.example.dragan.pullarticles;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 public class ListOfArticles extends AppCompatActivity {
 
+    private class Task extends AsyncTask<URL, Void, String> {
 
-    private class ATlistOfArticles extends AsyncTask<Void, Void, String> {
-
-        protected String doInBackground(Void... params) {
-            String s = "";
-            String urls = "http://android.ogosense.net/interns/ace/articles.php";
+        protected String doInBackground(URL... params) {
+            String text = "";
+            BufferedReader reader = null;
+            URL url=params[0];
+            JSONObject object=new JSONObject();
             try {
-                URL url = new URL(urls);
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("GET");
-                //s  += connection.getResponseCode();
+                object.put("uid",uid);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setDoOutput(true);
+                conn.setDoInput(true);
+                conn.setRequestProperty("Content-Type", "application/json");
+                conn.setRequestProperty("Accept", "application/json");
+                conn.setRequestMethod("POST");
+                OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+                wr.write(object.toString());
+                wr.flush();
+                reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                StringBuilder sb = new StringBuilder();
+                String line = null;
+                text = null;
 
-                BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                String r;
-                while((r = reader.readLine()) != null) s += r + "\n";
+                // Read Server Response
+                while ((line = reader.readLine()) != null) {
+                    // Append server response in string
+                    sb.append(line + "\n");
+                }
 
-            }catch (Exception e) {
-                System.out.println(e);
+                text = sb.toString();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            return s;
+            return text;
         }
 
         protected void onPostExecute(String someString) {
+            super.onPostExecute(someString);
             try {
                 JSONArray jsonArray = new JSONArray(someString);
                 LinearLayout layout = (LinearLayout) findViewById(R.id.InnerView);
@@ -69,24 +89,36 @@ public class ListOfArticles extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-        protected void onProgressUpdate(String... progress) {
-        }
-        protected void publishProgress(String result) {
-        }
     }
 
+    String uid=null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        new ATlistOfArticles().execute();
         setContentView(R.layout.activity_list_of_articles);
+        Bundle bundle=getIntent().getExtras();
+        uid=bundle.getString("uid");
+        URL url=null;
+        try {
+            url = new URL("http://android.ogosense.net/interns/ace/articles.php");
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        new Task().execute(url);
+
     }
 
     public void onClickTextView(String id){
-        Intent articleIntent = new Intent(ListOfArticles.this,ArticleView.class);
-        articleIntent.putExtra("id", id);
-        //ListOfArticles.this.finish();
-        startActivity(articleIntent);
+        ConnectivityManager cm = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        if(!(activeNetwork != null && activeNetwork.isConnectedOrConnecting()))
+            Toast.makeText(getApplicationContext(), "Server unreachable", Toast.LENGTH_SHORT).show();
+        else {
+            Intent articleIntent = new Intent(ListOfArticles.this, ArticleView.class);
+            articleIntent.putExtra("id", id);
+            //ListOfArticles.this.finish();
+            startActivity(articleIntent);
+        }
     }
 
 }
