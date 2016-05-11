@@ -72,14 +72,14 @@ public class ListOfArticles extends AppCompatActivity {
 
                 for(int i = 0; i < jsonArray.length(); i++){
                     JSONObject jsonObject = jsonArray.getJSONObject(i);
-                    TextView tv = new TextView(ListOfArticles.this);
+                    TextView textView = new TextView(ListOfArticles.this);
                     String str = jsonObject.getString("id") + ". " + jsonObject.getString("title") ;
-                    tv.setId(Integer.parseInt(jsonObject.getString("id")));
-                    tv.setText(str);
-                    tv.setTextSize(25);
-                    tv.setOnClickListener(onClickListener);
-                    if(jsonObject.getString("featured").equals("1")) tv.setTextColor(0xffff0000);
-                    layout.addView(tv);
+                    textView.setId(Integer.parseInt(jsonObject.getString("id")));
+                    textView.setText(str);
+                    textView.setTextSize(25);
+                    textView.setOnClickListener(onClickListener);
+                    if(jsonObject.getString("featured").equals("1")) textView.setTextColor(0xffff0000);
+                    layout.addView(textView);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -92,7 +92,7 @@ public class ListOfArticles extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_of_articles);
-        Bundle bundle=getIntent().getExtras();
+        Bundle bundle = getIntent().getExtras();
         uid = bundle.getString("uid");
         URL url = null;
         try {
