@@ -48,7 +48,7 @@ public class ArticleView extends AppCompatActivity {
     }
 
 
-    private class ATArticles extends AsyncTask<Void, Void, String> {
+    private class ArticlesTask extends AsyncTask<Void, Void, String> {
 
         protected String doInBackground(Void... params) {
             Bundle extras = getIntent().getExtras();
@@ -117,7 +117,7 @@ public class ArticleView extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        new ATArticles().execute();
+        new ArticlesTask().execute();
         setContentView(R.layout.activity_article_view);
     }
 }

@@ -23,12 +23,12 @@ import java.net.URL;
 
 public class ListOfArticles extends AppCompatActivity {
 
-    private class Task extends AsyncTask<URL, Void, String> {
+    private class ListOfArticlesTask extends AsyncTask<URL, Void, String> {
 
         protected String doInBackground(URL... params) {
             String text = "";
             BufferedReader reader;
-            URL url=params[0];
+            URL url = params[0];
             JSONObject object=new JSONObject();
             try {
                 object.put("uid",uid);
@@ -94,13 +94,13 @@ public class ListOfArticles extends AppCompatActivity {
         setContentView(R.layout.activity_list_of_articles);
         Bundle bundle=getIntent().getExtras();
         uid = bundle.getString("uid");
-        URL url=null;
+        URL url = null;
         try {
             url = new URL("http://android.ogosense.net/interns/ace/articles.php");
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
-        new Task().execute(url);
+        new ListOfArticlesTask().execute(url);
     }
 
     public void onClickTextView(String id){
