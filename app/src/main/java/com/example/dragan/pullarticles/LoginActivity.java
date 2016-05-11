@@ -88,12 +88,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 
                     StringBuilder sb = new StringBuilder();
-                    String line = null;
+                    String line;
 
                     // Read Server Response
                     while ((line = reader.readLine()) != null) {
                         // Append server response in string
-                        sb.append(line + "\n");
+                        sb.append(line).append("\n");
                     }
                     text = sb.toString();
                 }

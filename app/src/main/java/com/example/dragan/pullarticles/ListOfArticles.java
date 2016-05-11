@@ -27,7 +27,7 @@ public class ListOfArticles extends AppCompatActivity {
 
         protected String doInBackground(URL... params) {
             String text = "";
-            BufferedReader reader = null;
+            BufferedReader reader;
             URL url=params[0];
             JSONObject object=new JSONObject();
             try {
@@ -43,13 +43,13 @@ public class ListOfArticles extends AppCompatActivity {
                 wr.flush();
                 reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                 StringBuilder sb = new StringBuilder();
-                String line = null;
+                String line;
                 text = null;
 
                 // Read Server Response
                 while ((line = reader.readLine()) != null) {
                     // Append server response in string
-                    sb.append(line + "\n");
+                    sb.append(line).append("\n");
                 }
 
                 text = sb.toString();
