@@ -108,7 +108,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             super.onPostExecute(s);
 
             if(s.equals("-2")) {
-                Toast.makeText(getApplicationContext(), "Server unreachable", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "No internet connection..", Toast.LENGTH_SHORT).show();
                 Intent loginAgain = new Intent(LoginActivity.this, LoginActivity.class);
                 LoginActivity.this.finish();
                 startActivity(loginAgain);
@@ -128,7 +128,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                             Intent loginAgain = new Intent(LoginActivity.this, LoginActivity.class);
                             LoginActivity.this.finish();
                             startActivity(loginAgain);
-
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

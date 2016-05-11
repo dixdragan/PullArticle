@@ -47,11 +47,9 @@ public class ListOfArticles extends AppCompatActivity {
                 text = null;
 
                 // Read Server Response
-                while ((line = reader.readLine()) != null) {
+                while ((line = reader.readLine()) != null)
                     // Append server response in string
                     sb.append(line).append("\n");
-                }
-
                 text = sb.toString();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -83,8 +81,6 @@ public class ListOfArticles extends AppCompatActivity {
                     if(jsonObject.getString("featured").equals("1")) tv.setTextColor(0xffff0000);
                     layout.addView(tv);
                 }
-
-
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -97,7 +93,7 @@ public class ListOfArticles extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_of_articles);
         Bundle bundle=getIntent().getExtras();
-        uid=bundle.getString("uid");
+        uid = bundle.getString("uid");
         URL url=null;
         try {
             url = new URL("http://android.ogosense.net/interns/ace/articles.php");
@@ -105,14 +101,13 @@ public class ListOfArticles extends AppCompatActivity {
             e.printStackTrace();
         }
         new Task().execute(url);
-
     }
 
     public void onClickTextView(String id){
         ConnectivityManager cm = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         if(!(activeNetwork != null && activeNetwork.isConnectedOrConnecting()))
-            Toast.makeText(getApplicationContext(), "Server unreachable", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "No internet connection..", Toast.LENGTH_SHORT).show();
         else {
             Intent articleIntent = new Intent(ListOfArticles.this, ArticleView.class);
             articleIntent.putExtra("id", id);
